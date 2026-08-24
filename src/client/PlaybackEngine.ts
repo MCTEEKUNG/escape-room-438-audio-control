@@ -27,6 +27,7 @@ export class PlaybackEngine {
     if (command.type === 'play-background') return this.playBackground(command.zoneId, command.assetId)
     if (command.type === 'stop-background') return this.stopBackground(command.zoneId)
     if (command.type === 'trigger-effect') return this.playEffect(resolveTargetZone(command), command.assetId)
+    if (command.type === 'stop-effect') return this.stopEffect(command.zoneId, command.assetId)
     if (command.type === 'stop-zone') return this.stopZone(command.zoneId)
     if (command.type === 'stop-all') return this.stopAll()
     if (command.type === 'set-volume' || command.type === 'set-mute') {
@@ -131,6 +132,21 @@ export class PlaybackEngine {
 
   private removeEffect(zoneId: string, voice: Voice) {
     this.effects.set(zoneId, (this.effects.get(zoneId) || []).filter((item) => item !== voice))
+  }
+
+  private stopEffect(zoneId: string, assetId: string) {
+    const voices = this.effects.get(zoneId) || []
+    const remaining: Voice[] = []
+    for (const voice of voices) {
+      if (voice.assetId === assetId) {
+        voice.audio.pause()
+        voice.audio.currentTime = 0
+        this.emit({ type: 'audio-ended', zoneId, assetId: voice.assetId, voiceKind: 'effect' })
+      } else {
+        remaining.push(voice)
+      }
+    }
+    this.effects.set(zoneId, remaining)
   }
 
   private stopZone(zoneId: string) {

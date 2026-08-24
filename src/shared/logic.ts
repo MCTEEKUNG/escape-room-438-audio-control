@@ -25,16 +25,23 @@ export function assetDisplayName(fileName: string) {
 
 export function mergeScannedAssets(current: AudioAsset[], fileNames: string[], defaultZoneId: string) {
   const byPath = new Map(current.map((asset) => [asset.filePath, asset]))
-  const discovered = fileNames.map((filePath) => byPath.get(filePath) ?? ({
-    id: `asset-${crypto.randomUUID()}`,
-    name: assetDisplayName(filePath),
-    filePath,
-    category: 'effect' as const,
-    defaultZoneId,
-    behavior: 'allow-overlap' as const,
-    volume: 1,
-    color: '#2cc8b6',
-  }))
+  const discovered = fileNames.map((filePath) => {
+    const existing = byPath.get(filePath)
+    if (existing) return existing
+    const isInstant = filePath.startsWith('myinstants-')
+    return {
+      id: `asset-${crypto.randomUUID()}`,
+      name: assetDisplayName(filePath),
+      filePath,
+      category: 'effect' as const,
+      defaultZoneId,
+      behavior: 'allow-overlap' as const,
+      volume: 1,
+      color: '#2cc8b6',
+      source: isInstant ? ('myinstants' as const) : ('upload' as const),
+      subcategory: isInstant ? 'Trending TH' : 'Uploaded',
+    }
+  })
   const discoveredPaths = new Set(fileNames)
   return [
     ...discovered,

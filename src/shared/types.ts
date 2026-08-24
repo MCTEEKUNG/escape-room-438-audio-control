@@ -24,6 +24,8 @@ export interface AudioAsset {
   color: string
   shortcut?: string
   missing?: boolean
+  source?: 'upload' | 'myinstants'
+  subcategory?: string
 }
 
 export interface AppConfig {
@@ -51,6 +53,7 @@ export type ControlCommand =
   | { type: 'play-background'; zoneId: string; assetId: string }
   | { type: 'stop-background'; zoneId: string }
   | { type: 'trigger-effect'; zoneId: string; assetId: string; overrideZoneId?: string }
+  | { type: 'stop-effect'; zoneId: string; assetId: string }
   | { type: 'stop-zone'; zoneId: string }
   | { type: 'stop-all' }
   | { type: 'set-volume'; zoneId: string; volume: number }

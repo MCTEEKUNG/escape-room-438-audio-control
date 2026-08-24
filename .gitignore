@@ -13,11 +13,8 @@ dist-server
 dist-ssr
 *.local
 
-# Room-local state and uploaded audio (may contain PINs or licensed media)
+# Room-local state
 data/config.json
-data/library.json
-audio/*
-!audio/.gitkeep
 
 # Editor directories and files
 .vscode/*

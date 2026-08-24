@@ -186,6 +186,8 @@ app.post('/api/library/:id', async (req, res) => {
     volume: clampVolume(Number(patch.volume ?? current.volume)),
     color: /^#[0-9a-f]{6}$/i.test(String(patch.color)) ? String(patch.color) : current.color,
     shortcut: String(patch.shortcut || '').slice(0, 2) || undefined,
+    source: patch.source === 'myinstants' || patch.source === 'upload' ? patch.source : current.source,
+    subcategory: patch.subcategory ? String(patch.subcategory).slice(0, 40) : current.subcategory,
   }
   await persistLibrary()
   broadcast({ channel: 'state', payload: publicState() })
